@@ -24,6 +24,10 @@ type CliOptions = {
   hostingProviders?: string[];
   storageType?: string;
   accessibility?: boolean;
+  includeWebsite?: boolean;
+  includePricing?: boolean;
+  includeTestimonials?: boolean;
+  includeAuth?: boolean;
 };
 
 const argv = yargs(hideBin(process.argv))
@@ -68,7 +72,11 @@ async function main() {
     argv.pricingModel === undefined ||
     argv.hostingProviders === undefined ||
     argv.storageType === undefined ||
-    argv.accessibility === undefined;
+    argv.accessibility === undefined ||
+    argv.includeWebsite === undefined ||
+    argv.includePricing === undefined ||
+    argv.includeTestimonials === undefined ||
+    argv.includeAuth === undefined;
 
   if (needsPrompt) {
     // Use Select for UI type with clear explanations
@@ -251,6 +259,60 @@ async function main() {
         'Would you like to include accessibility features? (Helps users with disabilities and improves usability for everyone. Highly recommended for inclusivity.)',
       initial: true,
     });
+
+    console.log(
+      '\nWould you like to include a standalone website to promote your Chrome Extension?',
+    );
+    console.log(
+      '(A dedicated website helps with SEO, brand visibility, trust building, and provides support/documentation.)',
+    );
+    const { includeWebsite } = await enquirer.prompt({
+      type: 'confirm',
+      name: 'includeWebsite',
+      message: 'Include a standalone website?',
+      initial: false,
+    });
+
+    let websiteFeatures: { includePricing?: boolean; includeTestimonials?: boolean; includeAuth?: boolean } = {};
+    if (includeWebsite) {
+      console.log('\nWhat features should your website include?');
+      console.log('(These will be built into your one-page website with privacy policy, terms, and support pages.)');
+      
+      const { includePricing } = await enquirer.prompt({
+        type: 'confirm',
+        name: 'includePricing',
+        message: `Include pricing information on the website? ${pricingModel !== 'none' ? '(Recommended since you selected a pricing model)' : ''}`,
+        initial: pricingModel !== 'none',
+      });
+      
+      const { includeTestimonials } = await enquirer.prompt({
+        type: 'confirm',
+        name: 'includeTestimonials',
+        message: 'Include testimonials section on the website? (Great for building trust and social proof)',
+        initial: true,
+      });
+      
+      const { includeAuth } = await enquirer.prompt({
+        type: 'confirm',
+        name: 'includeAuth',
+        message: `Include authentication features on the website? ${authMethods.includes('google') || authMethods.includes('github') || authMethods.includes('email') ? '(Recommended since you selected authentication)' : ''}`,
+        initial: authMethods.includes('google') || authMethods.includes('github') || authMethods.includes('email'),
+      });
+      
+      websiteFeatures = { 
+        includePricing, 
+        includeTestimonials, 
+        includeAuth 
+      };
+    } else {
+      // Initialize with false values when website is not included
+      websiteFeatures = {
+        includePricing: false,
+        includeTestimonials: false,
+        includeAuth: false
+      };
+    }
+
     config = {
       ...argv,
       ...tailwind,
@@ -264,6 +326,8 @@ async function main() {
       storageType,
       ...accessibility,
       uiType,
+      includeWebsite,
+      ...websiteFeatures,
     };
   } else {
     config = { ...argv };
@@ -321,6 +385,12 @@ function generateAIPrompt(config: CliOptions & any): string {
     features.push(`- Hosting: ${config.hostingProviders.join(', ')}`);
   if (config.storageType) features.push(`- Chrome Storage: ${config.storageType}`);
   if (config.accessibility) features.push('- Accessibility Features: Yes');
+  if (config.includeWebsite) {
+    features.push('- Standalone Website: Yes');
+    if (config.includePricing) features.push('  - Website includes pricing information');
+    if (config.includeTestimonials) features.push('  - Website includes testimonials section');
+    if (config.includeAuth) features.push('  - Website includes authentication features');
+  }
 
   // Generate authentication-specific requirements
   let authRequirements = '';
@@ -439,13 +509,116 @@ ${
 - GDPR compliance for user data handling`;
   }
 
+  // Generate website-specific requirements
+  let websiteRequirements = '';
+  if (config.includeWebsite) {
+    websiteRequirements = `
+
+## Standalone Website Requirements
+
+### Website Structure
+- **One-page landing site** with multiple sections
+- **Privacy Policy page** (required for Chrome Web Store)
+- **Terms of Service page**
+- **Support/Contact page**
+- **Responsive design** for all devices
+
+### Landing Page Sections
+- **Hero Section**: Value proposition + CTA to install extension
+- **Features Section**: Benefits, screenshots, GIFs
+${config.includeTestimonials ? '- **Testimonials Section**: User quotes and reviews' : ''}
+- **Install Instructions**: Demo video or step-by-step guide
+- **FAQ Section**: Common questions and answers
+- **Footer**: Links to privacy, support, GitHub, etc.
+
+### Website Features
+${config.includePricing ? `
+**Pricing Section:**
+- Display pricing tiers and features
+- Integration with selected pricing model (${config.pricingModel})
+- Clear value proposition for each tier
+- Call-to-action buttons for each plan` : ''}
+${config.includeAuth ? `
+**Authentication Integration:**
+- User account management on website
+- Login/register functionality
+- Profile management
+- Integration with extension authentication` : ''}
+
+### Technical Requirements
+- **SEO Optimized**: Meta tags, structured data, sitemap
+- **Fast Loading**: Optimized images, minified CSS/JS
+- **Analytics Ready**: Google Analytics or similar
+- **Contact Form**: Support request form
+- **Social Media**: Open Graph tags for sharing
+
+### File Structure
+- `website/index.html` - Landing page
+- `website/privacy.html` - Privacy policy
+- `website/terms.html` - Terms of service
+- `website/support.html` - Support page
+- `website/assets/` - Images, CSS, JS
+- `website/css/` - Stylesheets
+- `website/js/` - JavaScript files`;
+  }
+
+  // Generate Chrome Web Store documentation
+  const chromeStoreDocs = `
+
+## Chrome Web Store Listing Requirements
+
+### Required Information for Store Listing
+The following information must be configured in the Chrome Developer Dashboard when submitting your extension:
+
+**Basic Information:**
+- **Extension Name**: The name that appears in the store
+- **Short Description**: Brief description (max 132 characters)
+- **Long Description**: Detailed description of features and benefits
+- **Category**: Choose appropriate category (Productivity, Developer Tools, etc.)
+- **Tags**: Keywords for discoverability
+
+**Visual Assets:**
+- **Icons**: 128x128 PNG icon (required)
+- **Screenshots**: PNG or JPG, 640x400 or higher (at least 1 required)
+- **Promotional Video**: Optional, via YouTube URL
+- **Promotional Images**: Additional promotional graphics
+
+**Content:**
+- **Languages Supported**: List all supported languages
+- **Pricing**: Free or paid (configured based on pricing model)
+- **Permissions**: List of required permissions with explanations
+
+**Legal & Support:**
+- **Privacy Policy URL**: Required (points to your website)
+- **Support Website URL**: Optional but recommended
+- **Terms of Service URL**: Optional but recommended
+
+### Store Listing URL
+Your extension will be available at:
+\`https://chromewebstore.google.com/detail/your-extension-id\`
+
+### Submission Process
+1. Create developer account at Chrome Web Store Developer Dashboard
+2. Upload extension package (ZIP file)
+3. Fill in all required listing information
+4. Submit for review (typically 1-3 business days)
+5. Address any review feedback
+6. Publish to store
+
+### Best Practices
+- Write compelling descriptions that highlight value
+- Use high-quality screenshots and videos
+- Respond to user reviews and feedback
+- Keep listing information up to date
+- Monitor analytics and user feedback`;
+
   return `# Chrome Extension Project Specification
 
 ## Project Overview
 Create a complete Chrome Extension using React, TypeScript (strict mode), and Vite with the following specifications:
 
 ## Selected Features
-${features.join('\n')}${authRequirements}
+${features.join('\n')}${authRequirements}${websiteRequirements}${chromeStoreDocs}
 
 ## Required Files and Structure
 
@@ -563,6 +736,13 @@ Include these files:
       : ''
   }
 
+- \`docs/chrome-store-listing.md\`
+  Complete guide for Chrome Web Store submission, including:
+  - Required information and assets
+  - Submission process and best practices
+  - Store listing optimization tips
+  - Review process guidelines
+
 ## Accessibility & UX
 - Keyboard navigable components
 - Focus traps in modals
@@ -634,6 +814,12 @@ Include these files:
 12. Add comprehensive testing for all authentication flows`
       : ''
   }
+
+${config.includeWebsite ? `
+13. Create standalone website with all required pages
+14. Implement responsive design and SEO optimization
+15. Include contact forms and support functionality
+16. Optimize for performance and user experience` : ''}
 
 Please generate all the necessary files for this Chrome Extension project.`;
 }
