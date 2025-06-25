@@ -125,7 +125,7 @@ The CLI should proceed accordingly, either using the static templates or invokin
   - `docs/hosting-{provider}.md`
   - GitHub Actions deploy workflow (if applicable)
 
-#### 7. 📑 Docs & Templates
+#### 7. 📑 Documentation
 
 Scaffold based on features:
 
