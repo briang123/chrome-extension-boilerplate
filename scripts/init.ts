@@ -4,7 +4,6 @@ import { prompt } from 'enquirer';
 import Select from 'enquirer/lib/prompts/select.js';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { scaffoldFeature } from './scaffold.js';
 
 // Define CLI options for flag-based mode
 type CliOptions = {
@@ -89,17 +88,8 @@ async function main() {
     console.log(JSON.stringify(config, null, 2));
   }
 
-  // Integrate scaffolding utility for popup feature (demo)
-  if (config.uiType === 'popup') {
-    scaffoldFeature({
-      feature: 'popup',
-      variables: { projectName: 'MyChromeExtension' }, // TODO: get projectName from user input
-      dryRun: !!config.dryRun,
-      targetDir: 'src/popup',
-      logFile: 'docs/scaffold-report.md',
-    });
-  }
-  // TODO: Support more features and scaffolding source option (template vs. AI)
+  // TODO: Call AI agent to generate scaffolding files based on user choices
+  // The AI agent should generate all files dynamically with appropriate imports and dependencies
 }
 
 main().catch((err) => {
