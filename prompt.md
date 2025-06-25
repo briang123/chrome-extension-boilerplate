@@ -61,32 +61,119 @@ This boilerplate will be published as a **GitHub repository template** for easy 
 
 #### 2. 🪪 Interactive CLI Scaffold
 
-- Users are prompted to select features:
-  - UI Type (Popup / Window)
-  - Tailwind CSS (Y/n)
-  - i18n (Y/n, default: `react-i18next`)
-  - Local vs Sync storage
-  - Options panel (Y/n)
-  - Authentication methods (Y/n + multi-select)
-  - AI integrations (Y/n + model/provider + API key)
-  - Pricing model (Subscription, Freemium, etc.)
-  - Database integration (Postgres, Mongo, Firebase, etc.)
-  - Hosting provider(s)
-  - Chrome Web Store deployment setup
-- Each selected feature scaffolds its corresponding logic, UI, `.env.example`, routes, and `docs/` entries.
-- Unselected features must not scaffold anything.
-- All user input should be validated, and the CLI should provide clear error messages or suggestions.
+The CLI provides clear, user-friendly explanations for each feature and why users might want it:
 
-#### 3. 🔐 AI & Auth Integration
+**UI Type Selection:**
 
-- Prompt users to select AI provider (OpenAI, Claude, Gemini, etc.)
-- Scaffold:
-  - `src/lib/aiClient.ts`
-  - `.env.example`
-  - Fastify route for proxying if needed
-  - Usage sample in UI
-  - `docs/ai-integration.md`
-- **Security:** Never expose secrets in the client. Follow best security practices for API keys and authentication.
+- **Popup** (opens when clicking extension icon) - Most common choice for simple extensions
+- **Window** (opens in a new browser tab) - Better for complex interfaces
+- **Side Window** (detached pop-out, ChatGPT-style) - Opens in a dedicated side window, not injected into the page
+
+**Core Features:**
+
+- **Tailwind CSS** - Provides pre-built design components for faster development and a modern look
+- **i18n** - Allows your extension to be used in different languages like English, Spanish, etc.
+- **Options Page** - Lets users customize extension behavior in Chrome's settings menu
+
+**Authentication Methods** (multi-select):
+
+- **Google** - Sign in with Google account (convenient for most users)
+- **GitHub** - Sign in with GitHub account (great for developer tools)
+- **Email/Password** - Traditional login system
+- **None** - No authentication required
+
+**AI Integrations** (multi-select):
+
+- **OpenAI** - ChatGPT, GPT-4, etc.
+- **Claude** - Anthropic AI
+- **Gemini** - Google AI
+- **None** - No AI features
+
+**Database Integration:**
+
+- **Firebase** - Google cloud database (recommended for easy setup)
+- **Postgres** - Relational database
+- **MongoDB** - NoSQL database
+- **None** - No cloud database
+
+**Pricing Model:**
+
+- **Subscription** - Recurring payments (best for ongoing services)
+- **Freemium** - Free + paid upgrades
+- **One-time Purchase** - Single payment
+- **None** - Free extension
+
+**Hosting Provider(s)** (multi-select):
+
+- **Vercel** - Great for serverless and static sites
+- **Netlify** - Easy static hosting
+- **Firebase** - Google cloud hosting
+- **None** - No backend hosting
+
+**Chrome Storage Type:**
+
+- **Sync** - Syncs data across devices (best for users on multiple devices)
+- **Local** - Only on this device
+
+**Accessibility Features** - Helps users with disabilities and improves usability for everyone (highly recommended for inclusivity)
+
+**Smart Validation:**
+
+- Database is automatically required when authentication or pricing features are selected
+- Clear warnings and error messages guide users to valid configurations
+- Firebase is suggested as default database for easy setup
+
+#### 3. 🔐 Comprehensive Authentication System
+
+When authentication is enabled, the system includes:
+
+**User Account Management:**
+
+- Complete signup flow with email verification
+- Secure login with remember me functionality
+- Password change and reset password flows
+- Account settings and profile management
+
+**Security Measures:**
+
+- Password requirements: Minimum 8 characters, uppercase, lowercase, number, and special character
+- Rate limiting: Max 5 login attempts per 15 minutes
+- Session management: Secure JWT tokens with refresh token rotation
+- CSRF protection, input validation, SQL injection prevention
+- XSS prevention, HTTPS only, secure headers (HSTS, CSP, etc.)
+
+**Validation & Error Handling:**
+
+- Real-time client-side validation with immediate feedback
+- Comprehensive server-side validation on all endpoints
+- User-friendly error messages without exposing system details
+- Loading states and clear success feedback
+
+**Authentication Methods:**
+
+- **Email/Password**: Email verification, password reset via email, account lockout after failed attempts
+- **Google OAuth**: Sign-in integration, profile syncing, account linking/unlinking
+- **GitHub OAuth**: Sign-in integration, profile syncing, account linking/unlinking
+
+**Database Schema & API Endpoints:**
+
+- Complete database tables: Users, Sessions, Password_Resets, Email_Verifications
+- Full REST API endpoints for all authentication operations
+- OAuth callback endpoints for Google and GitHub
+
+**Frontend Components:**
+
+- Authentication context, forms, guards, and utilities
+- Proper error handling and loading states
+- Accessible forms with screen reader support
+
+**Security Best Practices:**
+
+- Store sensitive data in Chrome's secure storage
+- Implement proper CORS policies
+- Use environment variables for all secrets
+- Log authentication events for security monitoring
+- GDPR compliance for user data handling
 
 #### 4. 💳 Monetization & Pricing
 
@@ -94,10 +181,12 @@ This boilerplate will be published as a **GitHub repository template** for easy 
 - Scaffold integration files and pricing docs:
   - `docs/pricing-models.md`
   - `docs/payment-integration.md`
+- **Note:** Pricing models automatically require a database for user management and payment tracking
 
 #### 5. 📅 Database
 
 - Prompt for database choice
+- **Smart Requirements:** Database is automatically required when authentication or pricing features are selected
 - Scaffold:
   - `infra/db/{provider}/`
   - `.env.example`
@@ -133,6 +222,8 @@ Scaffold based on features:
 - Testing with Vitest or Jest
 - Chrome API mocks
 - Unit + integration test samples
+- Authentication flow testing (when auth is enabled)
+- Security testing (rate limiting, validation, token management)
 - Accessibility testing
 - Commands:
   - `npm run init`
@@ -151,6 +242,10 @@ Scaffold based on features:
 ### 🏁 Summary
 
 > 📓 All features, setup, and integrations must be conditionally scaffolded based on the user's interactive CLI answers. The boilerplate must be zero-assumption by default.
+
+> 🔒 **Security First:** When authentication is enabled, implement enterprise-level security measures including proper validation, rate limiting, secure token management, and comprehensive error handling.
+
+> 🎯 **User Experience:** Provide clear, helpful explanations for each feature choice to guide users toward the best configuration for their needs.
 
 ---
 

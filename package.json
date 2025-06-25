@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "init": "ts-node scripts/init.ts",
+    "init": "ts-node --esm scripts/init.ts",
     "dev": "vite",
     "build": "vite build",
     "zip": "zip -r dist.zip dist/"
@@ -15,7 +15,7 @@
     "fastify": "^4.25.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "yargs": "^18.0.0"
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
