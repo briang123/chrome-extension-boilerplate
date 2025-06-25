@@ -31,18 +31,6 @@ This boilerplate will be published as a **GitHub repository template** for easy 
 - Log all scaffolding actions in a file like `docs/scaffold-report.md`.
 - The CLI should provide guidance for upgrading the boilerplate in existing projects (e.g., via migration scripts or changelogs).
 
-### 🛠️ Scaffolding Source Option
-
-During CLI setup, prompt the user:
-
-- "Would you like to use pre-existing scaffolding templates, or let the AI agent generate scaffolding files at runtime?"
-  - [ ] Use templates from `scaffold-templates/`
-  - [ ] Let AI agent generate files dynamically
-
-The CLI should proceed accordingly, either using the static templates or invoking the AI agent for file generation.
-
----
-
 ### 🔄 Incremental Feature Addition
 
 - The CLI must support adding new features or integrations to an existing project at any time, not just during initial setup.
