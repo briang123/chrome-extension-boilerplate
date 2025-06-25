@@ -24,7 +24,8 @@ This boilerplate will be published as a **GitHub repository template** for easy 
   - Environment variables
   - Components, configuration, routes, and assets
   - Documentation under `docs/`
-- Scaffolding logic should rely on modular, extensible templates or generators stored in a `scaffold-templates/` or similar directory. New features should be easy to add without modifying core logic.
+  - `.gitignore` with appropriate exclusions for the selected features
+- Use AI agent to generate all scaffolding files dynamically based on user choices.
 - Update the manifest, `.env.example`, documentation, and other core files with dynamic values.
 - Scaffolded files must include inline `// TODO`, `// CONFIGURE`, or `// REMOVE IF UNUSED` comments.
 - Log all scaffolding actions in a file like `docs/scaffold-report.md`.
