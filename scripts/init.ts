@@ -1,5 +1,5 @@
 #!/usr/bin/env ts-node
-import { prompt } from 'enquirer';
+import enquirer from 'enquirer';
 // @ts-expect-error: No type declarations for Select prompt
 import Select from 'enquirer/lib/prompts/select.js';
 import yargs from 'yargs';
@@ -9,7 +9,7 @@ import path from 'path';
 
 // Define CLI options for flag-based mode
 type CliOptions = {
-  uiType?: 'popup' | 'window';
+  uiType?: 'popup' | 'window' | 'sidewindow';
   tailwind?: boolean;
   i18n?: boolean;
   dryRun?: boolean;
@@ -19,8 +19,8 @@ type CliOptions = {
 const argv = yargs(hideBin(process.argv))
   .option('uiType', {
     type: 'string',
-    choices: ['popup', 'window'],
-    describe: 'UI type (popup or window)',
+    choices: ['popup', 'window', 'sidewindow'],
+    describe: 'UI type (popup, window, or sidewindow)',
   })
   .option('tailwind', {
     type: 'boolean',
@@ -50,28 +50,48 @@ async function main() {
     argv.interactive || !argv.uiType || argv.tailwind === undefined || argv.i18n === undefined;
 
   if (needsPrompt) {
-    // Use Select for UI type
+    // Use Select for UI type with clear explanations
     const uiTypePrompt = new Select({
       name: 'uiType',
-      message: 'Choose UI type:',
-      choices: ['popup', 'window'],
+      message: 'How would you like users to interact with your Chrome extension?',
+      choices: [
+        {
+          name: 'popup',
+          message:
+            'Popup (opens when clicking extension icon) - Most common choice for simple extensions',
+          hint: 'A small window that appears when users click your extension icon in the toolbar',
+        },
+        {
+          name: 'window',
+          message: 'Window (opens in a new browser tab) - Better for complex interfaces',
+          hint: 'A full browser window/tab that opens when users click your extension icon',
+        },
+        {
+          name: 'sidewindow',
+          message:
+            'Side Window (detached pop-out, ChatGPT-style) - Opens in a dedicated side window, not injected into the page',
+          hint: 'A separate pop-out window, launched from the extension icon, for a focused experience',
+        },
+      ],
       initial: argv.uiType || 'popup',
     });
     const uiType = await uiTypePrompt.run();
-    const responses = await prompt<{
+    const responses = await enquirer.prompt<{
       tailwind: boolean;
       i18n: boolean;
     }>([
       {
         type: 'confirm',
         name: 'tailwind',
-        message: 'Include Tailwind CSS?',
+        message:
+          'Would you like to use Tailwind CSS for styling? (Provides pre-built design components for faster development)',
         initial: argv.tailwind !== undefined ? argv.tailwind : true,
       },
       {
         type: 'confirm',
         name: 'i18n',
-        message: 'Include i18n (react-i18next)?',
+        message:
+          'Do you want to support multiple languages? (Allows your extension to be used in different languages like English, Spanish, etc.)',
         initial: argv.i18n !== undefined ? argv.i18n : true,
       },
     ]);
@@ -101,7 +121,18 @@ async function main() {
 // Generate comprehensive AI prompt based on user configuration
 function generateAIPrompt(config: CliOptions): string {
   const features = [];
-  if (config.uiType) features.push(`- UI Type: ${config.uiType}`);
+  if (config.uiType === 'sidewindow') {
+    features.push(
+      '- Side Window (detached pop-out, ChatGPT-style): Opens in a dedicated side window, not injected into the page.',
+    );
+    features.push(
+      '  - Use a background script to call chrome.windows.create({ url: "window.html", type: "popup", width: 400, height: 800 })',
+    );
+    features.push('  - The main extension action should only be a launcher, not the full UI.');
+    features.push('  - Do NOT inject a UI overlay into the current page.');
+  } else if (config.uiType) {
+    features.push(`- UI Type: ${config.uiType}`);
+  }
   if (config.tailwind) features.push('- Tailwind CSS: Yes');
   if (config.i18n) features.push('- i18n (react-i18next): Yes');
 
