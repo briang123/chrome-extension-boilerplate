@@ -28,6 +28,8 @@ type CliOptions = {
   includePricing?: boolean;
   includeTestimonials?: boolean;
   includeAuth?: boolean;
+  extensionDescription?: string;
+  extensionName?: string;
 };
 
 const argv = yargs(hideBin(process.argv))
@@ -63,6 +65,8 @@ async function main() {
   const needsPrompt =
     argv.interactive ||
     !argv.uiType ||
+    !argv.extensionDescription ||
+    !argv.extensionName ||
     argv.tailwind === undefined ||
     argv.i18n === undefined ||
     argv.optionsPage === undefined ||
@@ -79,6 +83,23 @@ async function main() {
     argv.includeAuth === undefined;
 
   if (needsPrompt) {
+    // Collect extension description first
+    console.log('\nTell us about your Chrome Extension:');
+    console.log('(This description will be used to generate appropriate content for your extension, website, and Chrome Web Store listing.)');
+    const { extensionDescription } = await enquirer.prompt({
+      type: 'input',
+      name: 'extensionDescription',
+      message: 'What does your Chrome extension do? (Brief description of its main purpose and features)',
+      required: true,
+    });
+    
+    const { extensionName } = await enquirer.prompt({
+      type: 'input',
+      name: 'extensionName',
+      message: 'What is the name of your Chrome extension?',
+      required: true,
+    });
+    
     // Use Select for UI type with clear explanations
     const uiTypePrompt = new Select({
       name: 'uiType',
@@ -328,6 +349,8 @@ async function main() {
       uiType,
       includeWebsite,
       ...websiteFeatures,
+      extensionDescription,
+      extensionName,
     };
   } else {
     config = { ...argv };
@@ -616,6 +639,10 @@ Your extension will be available at:
 
 ## Project Overview
 Create a complete Chrome Extension using React, TypeScript (strict mode), and Vite with the following specifications:
+
+## Extension Details
+**Extension Name:** ${config.extensionName || 'Your Chrome Extension'}
+**Description:** ${config.extensionDescription || 'A Chrome extension that enhances your browsing experience'}
 
 ## Selected Features
 ${features.join('\n')}${authRequirements}${websiteRequirements}${chromeStoreDocs}
