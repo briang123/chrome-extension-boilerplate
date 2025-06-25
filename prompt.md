@@ -61,7 +61,12 @@ This boilerplate will be published as a **GitHub repository template** for easy 
 
 #### 2. 🪪 Interactive CLI Scaffold
 
-The CLI provides clear, user-friendly explanations for each feature and why users might want it:
+The CLI collects essential information first, then provides clear, user-friendly explanations for each feature:
+
+**Essential Information:**
+
+- **Extension Name**: The name of your Chrome extension
+- **Extension Description**: What your extension does (used for AI prompt generation, website content, and Chrome Web Store listing)
 
 **UI Type Selection:**
 
@@ -117,11 +122,20 @@ The CLI provides clear, user-friendly explanations for each feature and why user
 
 **Accessibility Features** - Helps users with disabilities and improves usability for everyone (highly recommended for inclusivity)
 
+**Standalone Website:**
+
+- **Include Website** - A dedicated website helps with SEO, brand visibility, trust building, and provides support/documentation
+- **Website Features** (if website is selected):
+  - **Pricing Section** - Defaults to true if pricing model selected (recommended for monetized extensions)
+  - **Testimonials Section** - Defaults to true (great for building trust and social proof)
+  - **Authentication Features** - Defaults to true if authentication selected (recommended for user accounts)
+
 **Smart Validation:**
 
 - Database is automatically required when authentication or pricing features are selected
 - Clear warnings and error messages guide users to valid configurations
 - Firebase is suggested as default database for easy setup
+- Website features default intelligently based on previous selections
 
 #### 3. 🔐 Comprehensive Authentication System
 
@@ -175,7 +189,90 @@ When authentication is enabled, the system includes:
 - Log authentication events for security monitoring
 - GDPR compliance for user data handling
 
-#### 4. 💳 Monetization & Pricing
+#### 4. 🌐 Standalone Website Features
+
+When a standalone website is selected, the system includes:
+
+**Website Structure:**
+
+- One-page landing site with multiple sections
+- Privacy Policy page (required for Chrome Web Store)
+- Terms of Service page
+- Support/Contact page
+- Responsive design for all devices
+
+**Landing Page Sections:**
+
+- Hero Section: Value proposition + CTA to install extension
+- Features Section: Benefits, screenshots, GIFs
+- Testimonials Section: User quotes and reviews (if enabled)
+- Install Instructions: Demo video or step-by-step guide
+- FAQ Section: Common questions and answers
+- Footer: Links to privacy, support, GitHub, etc.
+
+**Smart Feature Integration:**
+
+- **Pricing Section**: Automatically included if pricing model selected, displays pricing tiers and features
+- **Authentication Integration**: Automatically included if authentication selected, provides user account management on website
+- **Content Generation**: Uses extension description to generate appropriate website content
+
+**Technical Requirements:**
+
+- SEO Optimized: Meta tags, structured data, sitemap
+- Fast Loading: Optimized images, minified CSS/JS
+- Analytics Ready: Google Analytics or similar
+- Contact Form: Support request form
+- Social Media: Open Graph tags for sharing
+
+#### 5. 🏪 Chrome Web Store Listing Documentation
+
+The system generates comprehensive Chrome Web Store listing documentation:
+
+**Required Information for Store Listing:**
+
+- Extension Name: The name that appears in the store
+- Short Description: Brief description (max 132 characters)
+- Long Description: Detailed description of features and benefits
+- Category: Choose appropriate category (Productivity, Developer Tools, etc.)
+- Tags: Keywords for discoverability
+
+**Visual Assets:**
+
+- Icons: 128x128 PNG icon (required)
+- Screenshots: PNG or JPG, 640x400 or higher (at least 1 required)
+- Promotional Video: Optional, via YouTube URL
+- Promotional Images: Additional promotional graphics
+
+**Content:**
+
+- Languages Supported: List all supported languages
+- Pricing: Free or paid (configured based on pricing model)
+- Permissions: List of required permissions with explanations
+
+**Legal & Support:**
+
+- Privacy Policy URL: Required (points to your website)
+- Support Website URL: Optional but recommended
+- Terms of Service URL: Optional but recommended
+
+**Submission Process:**
+
+- Create developer account at Chrome Web Store Developer Dashboard
+- Upload extension package (ZIP file)
+- Fill in all required listing information
+- Submit for review (typically 1-3 business days)
+- Address any review feedback
+- Publish to store
+
+**Best Practices:**
+
+- Write compelling descriptions that highlight value
+- Use high-quality screenshots and videos
+- Respond to user reviews and feedback
+- Keep listing information up to date
+- Monitor analytics and user feedback
+
+#### 6. 💳 Monetization & Pricing
 
 - Prompt for model and payment provider
 - Scaffold integration files and pricing docs:
@@ -183,7 +280,7 @@ When authentication is enabled, the system includes:
   - `docs/payment-integration.md`
 - **Note:** Pricing models automatically require a database for user management and payment tracking
 
-#### 5. 📅 Database
+#### 7. 📅 Database
 
 - Prompt for database choice
 - **Smart Requirements:** Database is automatically required when authentication or pricing features are selected
@@ -194,7 +291,7 @@ When authentication is enabled, the system includes:
   - GitHub secrets
   - `docs/database-{provider}.md`
 
-#### 6. 🏠 Hosting
+#### 8. 🏠 Hosting
 
 - Prompt for provider(s)
 - Scaffold:
@@ -204,7 +301,7 @@ When authentication is enabled, the system includes:
   - `docs/hosting-{provider}.md`
   - GitHub Actions deploy workflow (if applicable)
 
-#### 7. 📑 Documentation
+#### 9. 📑 Documentation
 
 Scaffold based on features:
 
@@ -214,9 +311,10 @@ Scaffold based on features:
 - `docs/feature-summary.md`
 - `docs/USAGE.md` — Instructions for repo reuse as GitHub template
 - `README.md` — Overview + CLI usage + feature summary
+- `docs/chrome-store-listing.md` — Complete Chrome Web Store submission guide
 - All documentation should be updated dynamically based on selected features.
 
-#### 8. ♻️ Dev Tooling & Testing
+#### 10. ♻️ Dev Tooling & Testing
 
 - Vite + HMR
 - Testing with Vitest or Jest
@@ -232,7 +330,7 @@ Scaffold based on features:
   - `npm run zip`
 - Linting with ESLint and Prettier
 
-#### 9. ♻️ Cleanup Guidance
+#### 11. ♻️ Cleanup Guidance
 
 - Unused scaffolded code should have:
   `// Optional setup for {provider}. Delete if not needed.`
@@ -246,6 +344,10 @@ Scaffold based on features:
 > 🔒 **Security First:** When authentication is enabled, implement enterprise-level security measures including proper validation, rate limiting, secure token management, and comprehensive error handling.
 
 > 🎯 **User Experience:** Provide clear, helpful explanations for each feature choice to guide users toward the best configuration for their needs.
+
+> 🌐 **Content Generation:** Use the extension description to generate appropriate content for the extension, website, and Chrome Web Store listing.
+
+> 🏪 **Store Ready:** Provide comprehensive guidance for Chrome Web Store submission with all required information and best practices.
 
 ---
 
