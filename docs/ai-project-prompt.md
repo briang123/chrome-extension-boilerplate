@@ -1,9 +1,11 @@
 # Chrome Extension Project Specification
 
 ## Project Overview
+
 Create a complete Chrome Extension using React, TypeScript (strict mode), and Vite with the following specifications:
 
 ## Selected Features
+
 - Side Window (detached pop-out, ChatGPT-style): Opens in a dedicated side window, not injected into the page.
   - Use a background script to call chrome.windows.create({ url: "window.html", type: "popup", width: 400, height: 800 })
   - The main extension action should only be a launcher, not the full UI.
@@ -12,6 +14,7 @@ Create a complete Chrome Extension using React, TypeScript (strict mode), and Vi
 ## Required Files and Structure
 
 ### Core Configuration
+
 - `manifest.json` (Manifest V3)
 - `package.json` with all necessary dependencies
 - `tsconfig.json` (TypeScript strict mode)
@@ -20,6 +23,7 @@ Create a complete Chrome Extension using React, TypeScript (strict mode), and Vi
 - `.gitignore` (appropriate exclusions)
 
 ### Source Code Structure
+
 - `src/popup/Popup.tsx` (React popup component)
 - `src/popup/popup.html` (popup HTML entry)
 - `src/background/background.ts` (service worker)
@@ -27,12 +31,15 @@ Create a complete Chrome Extension using React, TypeScript (strict mode), and Vi
 - `src/utils/` (utility functions)
 
 ### Styling
+
 - Basic CSS styling (See design-system.md
 
 ### Internationalization
+
 - No i18n required
 
 ### Development Tools
+
 - ESLint configuration
 - Prettier configuration
 - Testing setup (Vitest)
@@ -61,7 +68,7 @@ Create a complete Chrome Extension using React, TypeScript (strict mode), and Vi
 
 - Vitest or Jest setup
 - Mock Chrome APIs for UI testing
-- Unit and integration test examples for UI, background, auth flows, messaging
+- Unit and integration tests for UI, background, auth flows, messaging, utility functions, api calls, etc., when applicable
 
 ## Documentation Requirements
 
@@ -96,12 +103,14 @@ Include these files:
   - How to reset or inspect `chrome.storage`
 
 ## Accessibility & UX
+
 - Keyboard navigable components
 - Focus traps in modals
 - Custom alert/notification system with ARIA support
 - Optional theme toggler (light/dark/high-contrast)
 
 ## README.md Requirements
+
 - Project intro
 - CLI usage
 - Dev/build instructions
@@ -109,10 +118,12 @@ Include these files:
 - File structure explanation
 
 ## Bonus Features
+
 - Zip uploader CLI command
 - AI-aware design guidelines for future extensions
 
 ## Requirements
+
 - All files must include inline `// TODO`, `// CONFIGURE`, or `// REMOVE IF UNUSED` comments
 - Use React 18+ with TypeScript strict mode
 - Follow Chrome Extension Manifest V3 best practices
@@ -120,6 +131,7 @@ Include these files:
 - Add comprehensive documentation in `docs/` directory
 
 ## Instructions for AI Agent
+
 1. Create all files according to the specification above
 2. Ensure all dependencies are properly listed in `package.json`
 3. Include appropriate TypeScript types and interfaces

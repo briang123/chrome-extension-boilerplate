@@ -379,7 +379,27 @@ ${nextSteps.troubleshooting.map((step) => `- ${step}`).join('\n')}
       : ''
   }
 
-Please generate all the necessary files for this Chrome Extension project.`;
+Please generate all the necessary files for this Chrome Extension project.
+
+---
+
+## Additional Instructions for AI Agent
+
+After generating all project files, create:
+
+- A comprehensive \`README.md\` in the project root, including:
+  - Project overview (from user config)
+  - Getting started instructions (install, run, build, test, deploy)
+  - List of included features (extension, website, tech stack, options)
+  - CLI usage for incremental updates
+  - Where to find documentation
+  - Directory structure
+  - Any smart defaults or important notes
+  - Support/contact info
+- A \`docs/README.md\` in the docs folder, summarizing all documentation and linking to key docs.
+- Ensure all files are valid, linted, and error-free.
+- The content of these files should be based on the user's configuration and selected features.
+`;
 }
 
 function generateAuthRequirements(config: ExtensionConfig): string {
@@ -798,12 +818,13 @@ Your extension will be available at:
 export function generateExtension(config: ExtensionConfig): GenerationResult {
   try {
     const aiPrompt = generateAIPrompt(config);
-
     return {
       success: true,
       aiPrompt,
       config,
       filesGenerated: ['docs/ai-project-prompt.md'],
+      // Optionally, you can return the content for writing by the CLI
+      // e.g. readmeContent: readme, docsReadmeContent: docsReadme
     };
   } catch (error) {
     return {
