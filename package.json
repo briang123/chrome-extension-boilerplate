@@ -16,7 +16,8 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "lint": "eslint . --ext .ts,.tsx --fix",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@types/yargs": "^17.0.33",

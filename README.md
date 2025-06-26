@@ -44,6 +44,17 @@ npm run web:dev
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Code Formatting
+
+This project uses [Prettier](https://prettier.io/) for code formatting.
+
+- To format all files manually, run:
+  ```bash
+  npm run format
+  ```
+- If you use VS Code, workspace settings in `.vscode/settings.json` enable format on save and set Prettier as the default formatter for JS/TS/JSON files.
+- You can also install the Prettier extension in your editor for best results.
+
 ## License
 
 [MIT](LICENSE)
