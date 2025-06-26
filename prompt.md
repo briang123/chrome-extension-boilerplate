@@ -1,6 +1,73 @@
-# Chrome Extension Boilerplate Prompt
+# Chrome Extension Boilerplate Generator Prompt
 
-> **Note:** This boilerplate is designed for Chrome Extensions using **React**. All references and features assume React as the framework.
+## Overview
+
+This generator scaffolds a Chrome Extension project with a customizable stack. It supports React + Vite and React + Next.js for the website, and includes a CLI and web app for configuration. All features are available in both interfaces.
+
+## Website Framework Options
+
+- **React + Next.js**: Full-featured, SEO-optimized, supports blogs, dashboards, server-side rendering, and more.
+- **React + Vite**: Lightweight, fast, best for simple landing pages or single-page apps.
+
+## Why This Choice?
+
+- **React** is always used for the UI.
+- **Next.js** and **Vite** are build tools/frameworks for React. Next.js is best for SEO and complex sites; Vite is best for simple, fast SPAs.
+
+## Website Features
+
+- Pricing Information
+- Testimonials Section
+- Authentication Features
+- Cookie Consent Banner (GDPR)
+- Newsletter Subscription
+- Blog Section
+- Search Functionality
+- Progressive Web App (PWA)
+- Status Page
+- API Documentation
+- User Dashboard
+
+## Other Features
+
+- UI type selection (popup, window, sidewindow)
+- Tailwind CSS
+- i18n
+- Options page
+- Accessibility
+- Authentication (email, Google, GitHub)
+- AI integrations (OpenAI, Claude, Gemini)
+- Database (Firebase, Supabase, MongoDB, PostgreSQL)
+- Pricing model (freemium, subscription, one-time, usage-based)
+- Hosting provider (Vercel, Netlify, Firebase, AWS, GitHub Pages)
+- Chrome storage type (sync, local, session)
+
+## How It Works
+
+- The CLI and web app share core logic and types.
+- The generator produces a detailed AI prompt for project scaffolding.
+- Smart defaults are applied based on feature selection.
+
+## FAQ
+
+### What is React?
+
+A UI library for building user interfaces.
+
+### What is Vite?
+
+A build tool and dev server for React (and other frameworks). Used for fast development and bundling.
+
+### What is Next.js?
+
+A full-featured React framework for SEO, SSR, and complex sites.
+
+### Why choose between React + Next.js and React + Vite?
+
+- React + Next.js: Best for SEO, blogs, multi-page, and server-side rendered sites.
+- React + Vite: Best for simple, fast, single-page apps.
+
+## See the web app or run the CLI for all options and explanations.
 
 ---
 
