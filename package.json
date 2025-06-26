@@ -10,7 +10,8 @@
     "web:build": "vite build",
     "dev": "vite",
     "build": "vite build",
-    "zip": "zip -r dist.zip dist/"
+    "zip": "zip -r dist.zip dist/",
+    "validate": "node scripts/validate-generated-project.ts"
   },
   "dependencies": {
     "@types/yargs": "^17.0.33",
