@@ -1,12 +1,6 @@
-import {
-  ExtensionConfig,
-  ValidationResult,
-  AuthMethod,
-  PricingModel,
-  SmartDefaults,
-} from './types.js';
+import { ExtensionConfig, ValidationResult, SmartDefaults } from './types.js';
 
-export function validateConfig(config: ExtensionConfig): ValidationResult {
+export function validateConfig(config: Partial<ExtensionConfig>): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -23,21 +17,35 @@ export function validateConfig(config: ExtensionConfig): ValidationResult {
     errors.push('UI type is required');
   }
 
+  // Analytics validation
+  if (config.analytics?.enabled) {
+    if (!config.analytics.googleAnalyticsId?.trim()) {
+      errors.push('Google Analytics ID is required when analytics is enabled');
+    } else if (!config.analytics.googleAnalyticsId.match(/^G-[A-Z0-9]{10}$/)) {
+      errors.push('Google Analytics ID must be in format G-XXXXXXXXXX');
+    }
+  }
+
   // Authentication validation
-  if (config.authMethods && config.authMethods.length > 0) {
-    const hasAuth = config.authMethods.some((method) => method !== 'none');
-    if (hasAuth && config.database === 'none') {
-      errors.push('Authentication requires a database. Please select a database option.');
+  if (config.authMethods && config.authMethods.length > 0 && !config.authMethods.includes('none')) {
+    if (config.database === 'none') {
+      errors.push('Database is required when authentication is enabled');
     }
   }
 
   // Pricing validation
-  if (config.pricingModel && config.pricingModel !== 'none' && config.database === 'none') {
-    errors.push('Pricing model requires a database. Please select a database option.');
+  if (config.pricingModel && config.pricingModel !== 'none') {
+    if (config.database === 'none') {
+      errors.push('Database is required when pricing model is enabled');
+    }
   }
 
   // Website validation
   if (config.includeWebsite) {
+    if (!config.websiteFramework) {
+      errors.push('Website framework is required when website is included');
+    }
+
     if (config.includePricing && config.pricingModel === 'none') {
       warnings.push(
         'Website includes pricing information but no pricing model is selected. Consider adding a pricing model.',
@@ -65,6 +73,29 @@ export function validateConfig(config: ExtensionConfig): ValidationResult {
         'AI features are selected but no database is configured. Consider adding a database for conversation history and user preferences.',
       );
     }
+  }
+
+  // Smart defaults warnings
+  if (config.authMethods && config.authMethods.includes('none') && config.authMethods.length > 1) {
+    warnings.push(
+      'You selected both "none" and other authentication methods. Consider removing "none" if you want authentication.',
+    );
+  }
+
+  if (config.aiProviders && config.aiProviders.includes('none') && config.aiProviders.length > 1) {
+    warnings.push(
+      'You selected both "none" and other AI providers. Consider removing "none" if you want AI integration.',
+    );
+  }
+
+  if (
+    config.hostingProviders &&
+    config.hostingProviders.includes('none') &&
+    config.hostingProviders.length > 1
+  ) {
+    warnings.push(
+      'You selected both "none" and other hosting providers. Consider removing "none" if you want hosting.',
+    );
   }
 
   return {

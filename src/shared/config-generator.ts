@@ -40,6 +40,19 @@ export function generateAIPrompt(config: ExtensionConfig): string {
   if (config.aiProviders && config.aiProviders.length && !config.aiProviders.includes('none'))
     features.push(`- AI Integrations: ${config.aiProviders.join(', ')}`);
 
+  // Analytics
+  if (config.analytics?.enabled) {
+    features.push(`- Google Analytics: ${config.analytics.googleAnalyticsId}`);
+    const trackingFeatures = [];
+    if (config.analytics.trackPageViews) trackingFeatures.push('page views');
+    if (config.analytics.trackButtonClicks) trackingFeatures.push('button clicks');
+    if (config.analytics.trackUserActions) trackingFeatures.push('user actions');
+    if (config.analytics.trackExtensionUsage) trackingFeatures.push('extension usage');
+    if (trackingFeatures.length > 0) {
+      features.push(`  - Tracking: ${trackingFeatures.join(', ')}`);
+    }
+  }
+
   // Backend
   if (config.database && config.database !== 'none')
     features.push(`- Database: ${config.database}`);
@@ -73,6 +86,9 @@ export function generateAIPrompt(config: ExtensionConfig): string {
     websiteRequirements = generateWebsiteRequirements(config);
   }
 
+  // Generate analytics-specific requirements
+  const analyticsRequirements = generateAnalyticsRequirements(config);
+
   // Generate Chrome Web Store documentation
   const chromeStoreDocs = generateChromeStoreDocs();
 
@@ -91,7 +107,7 @@ Create a complete Chrome Extension using React, TypeScript (strict mode), and Vi
 **Description:** ${config.extensionDescription}
 
 ## Selected Features
-${features.join('\n')}${authRequirements}${websiteRequirements}${chromeStoreDocs}
+${features.join('\n')}${authRequirements}${websiteRequirements}${analyticsRequirements}${chromeStoreDocs}
 
 ## Required Files and Structure
 
@@ -762,6 +778,59 @@ ${
 - Open Graph and Twitter cards
 - Canonical URLs setup`
 }`;
+}
+
+function generateAnalyticsRequirements(config: ExtensionConfig): string {
+  if (!config.analytics?.enabled) return '';
+
+  return `
+
+## Google Analytics Integration
+
+**Google Analytics ID:** ${config.analytics.googleAnalyticsId}
+
+**Tracking Configuration:**
+${config.analytics.trackPageViews ? '- Page views tracking enabled' : ''}
+${config.analytics.trackButtonClicks ? '- Button clicks and interactions tracking enabled' : ''}
+${config.analytics.trackUserActions ? '- User actions and feature usage tracking enabled' : ''}
+${config.analytics.trackExtensionUsage ? '- Extension usage and performance tracking enabled' : ''}
+
+**Implementation Requirements:**
+
+### Website Analytics (if website is included)
+- Install and configure Google Analytics 4 (GA4) with the provided measurement ID
+- Track page views automatically on all website pages
+- Track button clicks and form submissions as custom events
+- Track user engagement metrics (time on page, scroll depth, etc.)
+- Implement proper consent management for GDPR compliance
+- Add analytics to the privacy policy and cookie banner
+
+### Extension Analytics
+- Track extension installation and uninstallation events
+- Track feature usage within the extension (popup opens, options page visits, etc.)
+- Track user interactions with extension UI elements
+- Monitor extension performance metrics
+- Track authentication events (login, logout, signup) if authentication is enabled
+- Track AI feature usage if AI providers are enabled
+
+### Security & Privacy
+- Ensure analytics data is anonymized and doesn't contain PII
+- Implement proper consent flows for analytics tracking
+- Store analytics configuration securely in environment variables
+- Follow Chrome Web Store policies for analytics usage
+- Provide users with opt-out options for analytics tracking
+
+### Environment Configuration
+- Add \`VITE_GOOGLE_ANALYTICS_ID\` or \`NEXT_PUBLIC_GOOGLE_ANALYTICS_ID\` to environment variables
+- Configure analytics in both development and production environments
+- Set up proper event tracking for all user interactions
+- Implement error tracking and performance monitoring
+
+### Documentation
+- Document analytics setup and configuration
+- Provide instructions for viewing analytics data
+- Include privacy policy updates for analytics usage
+- Document how to disable analytics for privacy-conscious users`;
 }
 
 function generateChromeStoreDocs(): string {

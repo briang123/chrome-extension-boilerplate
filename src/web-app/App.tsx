@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { ExtensionConfig } from '../shared/types';
 import { generateExtension } from '../shared/config-generator';
-import { generateNextSteps } from '../shared/next-steps';
 import ConfigForm from './components/ConfigForm';
 import ResultsView from './components/ResultsView';
 import './App.css';
 
 function App() {
   const [config, setConfig] = useState<ExtensionConfig | null>(null);
-  const [generationResult, setGenerationResult] = useState<any>(null);
+  const [generationResult, setGenerationResult] = useState<
+    import('../shared/types').GenerationResult | null
+  >(null);
   const [currentStep, setCurrentStep] = useState<'form' | 'results'>('form');
 
   const handleConfigSubmit = (submittedConfig: ExtensionConfig) => {
@@ -84,7 +85,6 @@ function App() {
           ) : (
             <ResultsView
               config={config!}
-              generationResult={generationResult!}
               onBack={handleBackToForm}
               onDownloadPrompt={handleDownloadPrompt}
               onDownloadConfig={handleDownloadConfig}

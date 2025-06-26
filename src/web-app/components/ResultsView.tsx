@@ -1,10 +1,9 @@
 import React from 'react';
-import { ExtensionConfig, GenerationResult } from '../../shared/types';
+import { ExtensionConfig } from '../../shared/types';
 import { generateNextSteps } from '../../shared/next-steps';
 
 interface ResultsViewProps {
   config: ExtensionConfig;
-  generationResult: GenerationResult;
   onBack: () => void;
   onDownloadPrompt: () => void;
   onDownloadConfig: () => void;
@@ -12,7 +11,6 @@ interface ResultsViewProps {
 
 const ResultsView: React.FC<ResultsViewProps> = ({
   config,
-  generationResult,
   onBack,
   onDownloadPrompt,
   onDownloadConfig,
@@ -27,6 +25,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({
     if (config.accessibility) features.push('Accessibility');
     if (config.aiProviders?.some((p) => p !== 'none')) features.push('AI Integration');
     if (config.pricingModel !== 'none') features.push('Pricing');
+    if (config.analytics?.enabled) features.push('Google Analytics');
     return features.join(', ') || 'Basic features only';
   };
 
@@ -44,7 +43,8 @@ const ResultsView: React.FC<ResultsViewProps> = ({
       <div className="results-header">
         <h2>🎉 Your Chrome Extension is Ready!</h2>
         <p>
-          We've generated everything you need to create your Chrome extension with AI assistance.
+          We&apos;ve generated everything you need to create your Chrome extension with AI
+          assistance.
         </p>
       </div>
 

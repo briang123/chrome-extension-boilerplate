@@ -1,11 +1,19 @@
 #!/usr/bin/env ts-node --esm
 
-import { ExtensionConfig, ValidationResult } from '../src/shared/types.js';
+import {
+  ExtensionConfig,
+  AuthMethod,
+  AiProvider,
+  Database,
+  PricingModel,
+  HostingProvider,
+  StorageType,
+  WebsiteFramework,
+} from '../src/shared/types.js';
 import { validateConfig } from '../src/shared/validation.js';
 import { generateExtension } from '../src/shared/config-generator.js';
 import { generateNextSteps } from '../src/shared/next-steps.js';
 import { writeFileSync, existsSync, readFileSync } from 'fs';
-import { join } from 'path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import enquirer from 'enquirer';
@@ -26,6 +34,12 @@ interface CLIArgs {
   pricingModel?: string;
   hostingProviders?: string[];
   storageType?: string;
+  analyticsEnabled?: boolean;
+  googleAnalyticsId?: string;
+  trackPageViews?: boolean;
+  trackButtonClicks?: boolean;
+  trackUserActions?: boolean;
+  trackExtensionUsage?: boolean;
   includeWebsite?: boolean;
   websiteFramework?: string;
   includePricing?: boolean;
@@ -107,6 +121,30 @@ async function main() {
     .option('storageType', {
       type: 'string',
       description: 'Chrome storage type',
+    })
+    .option('analyticsEnabled', {
+      type: 'boolean',
+      description: 'Include Google Analytics',
+    })
+    .option('googleAnalyticsId', {
+      type: 'string',
+      description: 'Google Analytics ID',
+    })
+    .option('trackPageViews', {
+      type: 'boolean',
+      description: 'Track page views',
+    })
+    .option('trackButtonClicks', {
+      type: 'boolean',
+      description: 'Track button clicks',
+    })
+    .option('trackUserActions', {
+      type: 'boolean',
+      description: 'Track user actions',
+    })
+    .option('trackExtensionUsage', {
+      type: 'boolean',
+      description: 'Track extension usage',
     })
     .option('includeWebsite', {
       type: 'boolean',
@@ -250,7 +288,7 @@ async function runInteractiveMode(): Promise<ExtensionConfig> {
     try {
       existingConfig = JSON.parse(readFileSync('scaffold.json', 'utf8'));
       console.log('📁 Found existing configuration. You can update or start fresh.\n');
-    } catch (error) {
+    } catch {
       console.log("⚠️  Found scaffold.json but couldn't read it. Starting fresh.\n");
     }
   }
@@ -382,83 +420,95 @@ async function runInteractiveMode(): Promise<ExtensionConfig> {
     },
     {
       type: 'confirm',
-      name: 'includeWebsite',
-      message: 'Include standalone website?',
-      initial: existingConfig.includeWebsite || false,
-    },
-    {
-      type: 'select',
-      name: 'websiteFramework',
-      message: 'Choose website framework:',
-      choices: [
-        {
-          name: 'nextjs',
-          message: 'React + Next.js (Recommended) - SEO-optimized with server-side rendering',
-          hint: 'Perfect for SEO, blogs, content-heavy sites',
-        },
-        {
-          name: 'vite',
-          message: 'React + Vite - Lightweight and fast for simple landing pages',
-          hint: 'Great for simple sites, faster development',
-        },
-      ],
-      initial: existingConfig.websiteFramework || 'nextjs',
-    },
-    {
-      type: 'confirm',
-      name: 'includeCookieBanner',
-      message: 'Include GDPR-compliant cookie consent banner?',
-      initial: existingConfig.includeCookieBanner || false,
-    },
-    {
-      type: 'confirm',
-      name: 'includeNewsletter',
-      message: 'Include newsletter subscription feature?',
-      initial: existingConfig.includeNewsletter || false,
-    },
-    {
-      type: 'confirm',
-      name: 'includeBlog',
-      message: 'Include blog/news section?',
-      initial: existingConfig.includeBlog || false,
-    },
-    {
-      type: 'confirm',
-      name: 'includeSearch',
-      message: 'Include search functionality?',
-      initial: existingConfig.includeSearch || false,
-    },
-    {
-      type: 'confirm',
-      name: 'includePWA',
-      message: 'Include Progressive Web App (PWA) features?',
-      initial: existingConfig.includePWA || false,
-    },
-    {
-      type: 'confirm',
-      name: 'includeStatusPage',
-      message: 'Include status page for service monitoring?',
-      initial: existingConfig.includeStatusPage || false,
-    },
-    {
-      type: 'confirm',
-      name: 'includeAPIDocs',
-      message: 'Include API documentation section?',
-      initial: existingConfig.includeAPIDocs || false,
-    },
-    {
-      type: 'confirm',
-      name: 'includeUserDashboard',
-      message: 'Include user dashboard for account management?',
-      initial: existingConfig.includeUserDashboard || false,
+      name: 'analyticsEnabled',
+      message: 'Include Google Analytics for tracking user behavior?',
+      initial: existingConfig.analytics?.enabled || false,
     },
   ];
 
-  const answers = (await enquirer.prompt(questions)) as any;
+  const answers = (await enquirer.prompt(questions)) as Record<string, unknown>;
+
+  // Handle analytics-specific questions
+  let analyticsConfig = {
+    enabled: false,
+    googleAnalyticsId: '',
+    trackPageViews: true,
+    trackButtonClicks: true,
+    trackUserActions: true,
+    trackExtensionUsage: true,
+  };
+
+  if (answers.analyticsEnabled) {
+    const analyticsQuestions = [
+      {
+        type: 'input',
+        name: 'googleAnalyticsId',
+        message: 'Enter your Google Analytics ID (G-XXXXXXXXXX):',
+        initial: existingConfig.analytics?.googleAnalyticsId || '',
+        validate: (value: string) => {
+          if (!value.trim()) return 'Google Analytics ID is required';
+          if (!value.match(/^G-[A-Z0-9]{10}$/)) {
+            return 'Google Analytics ID must be in format G-XXXXXXXXXX';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'confirm',
+        name: 'trackPageViews',
+        message: 'Track page views on website?',
+        initial: existingConfig.analytics?.trackPageViews !== false,
+      },
+      {
+        type: 'confirm',
+        name: 'trackButtonClicks',
+        message: 'Track button clicks and interactions?',
+        initial: existingConfig.analytics?.trackButtonClicks !== false,
+      },
+      {
+        type: 'confirm',
+        name: 'trackUserActions',
+        message: 'Track user actions and feature usage?',
+        initial: existingConfig.analytics?.trackUserActions !== false,
+      },
+      {
+        type: 'confirm',
+        name: 'trackExtensionUsage',
+        message: 'Track extension usage and performance?',
+        initial: existingConfig.analytics?.trackExtensionUsage !== false,
+      },
+    ];
+
+    const analyticsAnswers = (await enquirer.prompt(analyticsQuestions)) as Record<string, unknown>;
+    analyticsConfig = {
+      enabled: true,
+      googleAnalyticsId: analyticsAnswers.googleAnalyticsId as string,
+      trackPageViews: analyticsAnswers.trackPageViews as boolean,
+      trackButtonClicks: analyticsAnswers.trackButtonClicks as boolean,
+      trackUserActions: analyticsAnswers.trackUserActions as boolean,
+      trackExtensionUsage: analyticsAnswers.trackExtensionUsage as boolean,
+    };
+  }
 
   // Handle website-specific questions
-  let websiteFeatures = {
-    websiteFramework: 'nextjs' as const,
+  let websiteFeatures: Partial<
+    Pick<
+      ExtensionConfig,
+      | 'websiteFramework'
+      | 'includePricing'
+      | 'includeTestimonials'
+      | 'includeAuth'
+      | 'includeCookieBanner'
+      | 'includeNewsletter'
+      | 'includeBlog'
+      | 'includeSearch'
+      | 'includePWA'
+      | 'includeStatusPage'
+      | 'includeAPIDocs'
+      | 'includeUserDashboard'
+    >
+  > = {
+    websiteFramework: 'nextjs',
     includePricing: false,
     includeTestimonials: false,
     includeAuth: false,
@@ -516,36 +566,93 @@ async function runInteractiveMode(): Promise<ExtensionConfig> {
         message: 'Include GDPR-compliant cookie consent banner?',
         initial: existingConfig.includeCookieBanner || false,
       },
+      {
+        type: 'confirm',
+        name: 'includeNewsletter',
+        message: 'Include newsletter subscription feature?',
+        initial: existingConfig.includeNewsletter || false,
+      },
+      {
+        type: 'confirm',
+        name: 'includeBlog',
+        message: 'Include blog/news section?',
+        initial: existingConfig.includeBlog || false,
+      },
+      {
+        type: 'confirm',
+        name: 'includeSearch',
+        message: 'Include search functionality?',
+        initial: existingConfig.includeSearch || false,
+      },
+      {
+        type: 'confirm',
+        name: 'includePWA',
+        message: 'Include Progressive Web App (PWA) features?',
+        initial: existingConfig.includePWA || false,
+      },
+      {
+        type: 'confirm',
+        name: 'includeStatusPage',
+        message: 'Include status page for service monitoring?',
+        initial: existingConfig.includeStatusPage || false,
+      },
+      {
+        type: 'confirm',
+        name: 'includeAPIDocs',
+        message: 'Include API documentation section?',
+        initial: existingConfig.includeAPIDocs || false,
+      },
+      {
+        type: 'confirm',
+        name: 'includeUserDashboard',
+        message: 'Include user dashboard for account management?',
+        initial: existingConfig.includeUserDashboard || false,
+      },
     ];
 
-    const websiteAnswers = (await enquirer.prompt(websiteQuestions)) as any;
+    const websiteAnswers = (await enquirer.prompt(websiteQuestions)) as Record<string, unknown>;
     websiteFeatures = {
       ...websiteFeatures,
       ...websiteAnswers,
-      websiteFramework: websiteAnswers.websiteFramework as 'nextjs' | 'vite',
+      websiteFramework: (websiteAnswers.websiteFramework as 'nextjs' | 'vite') || 'nextjs',
     };
   }
 
   // Convert hostingProviders to array
   const hostingProviders =
-    answers.hostingProviders === 'none' ? ['none'] : [answers.hostingProviders];
+    answers.hostingProviders === 'none' ? ['none'] : [answers.hostingProviders as string];
+
+  // Remove websiteFramework from websiteFeatures before spreading
+  const { websiteFramework: wf } = websiteFeatures;
 
   return {
-    extensionName: answers.extensionName,
-    extensionDescription: answers.extensionDescription,
-    uiType: answers.uiType,
-    tailwind: answers.tailwind,
-    i18n: answers.i18n,
-    optionsPage: answers.optionsPage,
-    accessibility: answers.accessibility,
-    authMethods: answers.authMethods,
-    aiProviders: answers.aiProviders,
-    database: answers.database,
-    pricingModel: answers.pricingModel,
-    hostingProviders: hostingProviders as any,
-    storageType: answers.storageType,
-    includeWebsite: answers.includeWebsite,
-    ...websiteFeatures,
+    extensionName: answers.extensionName as string,
+    extensionDescription: answers.extensionDescription as string,
+    uiType: answers.uiType as 'popup' | 'window' | 'sidewindow',
+    tailwind: answers.tailwind as boolean,
+    i18n: answers.i18n as boolean,
+    optionsPage: answers.optionsPage as boolean,
+    accessibility: answers.accessibility as boolean,
+    authMethods: (answers.authMethods as string[]).map((m) => m as AuthMethod),
+    aiProviders: (answers.aiProviders as string[]).map((m) => m as AiProvider),
+    database: answers.database as Database,
+    pricingModel: answers.pricingModel as PricingModel,
+    hostingProviders: (hostingProviders as string[]).map((m) => m as HostingProvider),
+    storageType: answers.storageType as StorageType,
+    analytics: analyticsConfig,
+    includeWebsite: answers.includeWebsite as boolean,
+    includePricing: websiteFeatures.includePricing ?? false,
+    includeTestimonials: websiteFeatures.includeTestimonials ?? false,
+    includeAuth: websiteFeatures.includeAuth ?? false,
+    includeCookieBanner: websiteFeatures.includeCookieBanner ?? false,
+    includeNewsletter: websiteFeatures.includeNewsletter ?? false,
+    includeBlog: websiteFeatures.includeBlog ?? false,
+    includeSearch: websiteFeatures.includeSearch ?? false,
+    includePWA: websiteFeatures.includePWA ?? false,
+    includeStatusPage: websiteFeatures.includeStatusPage ?? false,
+    includeAPIDocs: websiteFeatures.includeAPIDocs ?? false,
+    includeUserDashboard: websiteFeatures.includeUserDashboard ?? false,
+    websiteFramework: wf === 'nextjs' || wf === 'vite' ? wf : 'nextjs',
   };
 }
 
@@ -553,22 +660,33 @@ async function runFlagMode(argv: CLIArgs): Promise<ExtensionConfig> {
   // Convert single values to arrays where needed
   const hostingProviders = argv.hostingProviders || ['none'];
 
+  // Build analytics config
+  const analyticsConfig = {
+    enabled: argv.analyticsEnabled || false,
+    googleAnalyticsId: argv.googleAnalyticsId || '',
+    trackPageViews: argv.trackPageViews !== false,
+    trackButtonClicks: argv.trackButtonClicks !== false,
+    trackUserActions: argv.trackUserActions !== false,
+    trackExtensionUsage: argv.trackExtensionUsage !== false,
+  };
+
   return {
     extensionName: argv.extensionName || 'My Extension',
     extensionDescription: argv.extensionDescription || 'A Chrome extension',
-    uiType: (argv.uiType as any) || 'popup',
+    uiType: (argv.uiType as 'popup' | 'window' | 'sidewindow') || 'popup',
     tailwind: argv.tailwind !== false,
     i18n: argv.i18n || false,
     optionsPage: argv.optionsPage || false,
     accessibility: argv.accessibility || false,
-    authMethods: (argv.authMethods as any[]) || ['none'],
-    aiProviders: (argv.aiProviders as any[]) || ['none'],
-    database: (argv.database as any) || 'none',
-    pricingModel: (argv.pricingModel as any) || 'none',
-    hostingProviders: hostingProviders as any,
-    storageType: (argv.storageType as any) || 'sync',
+    authMethods: (argv.authMethods as string[]).map((m) => m as AuthMethod) || ['none'],
+    aiProviders: (argv.aiProviders as string[]).map((m) => m as AiProvider) || ['none'],
+    database: (argv.database as Database) || 'none',
+    pricingModel: (argv.pricingModel as PricingModel) || 'none',
+    hostingProviders: (hostingProviders as string[]).map((m) => m as HostingProvider),
+    storageType: (argv.storageType as StorageType) || 'sync',
+    analytics: analyticsConfig,
     includeWebsite: argv.includeWebsite || false,
-    websiteFramework: (argv.websiteFramework as any) || 'nextjs',
+    websiteFramework: (argv.websiteFramework as WebsiteFramework) || 'nextjs',
     includePricing: argv.includePricing || false,
     includeTestimonials: argv.includeTestimonials || false,
     includeAuth: argv.includeAuth || false,

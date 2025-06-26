@@ -21,6 +21,14 @@ const ConfigForm: React.FC<ConfigFormProps> = ({ onSubmit }) => {
     pricingModel: 'none',
     hostingProviders: ['none'],
     storageType: 'sync',
+    analytics: {
+      enabled: false,
+      googleAnalyticsId: '',
+      trackPageViews: true,
+      trackButtonClicks: true,
+      trackUserActions: true,
+      trackExtensionUsage: true,
+    },
     includeWebsite: false,
     websiteFramework: 'nextjs',
     includePricing: false,
@@ -38,7 +46,7 @@ const ConfigForm: React.FC<ConfigFormProps> = ({ onSubmit }) => {
 
   const [errors, setErrors] = useState<string[]>([]);
 
-  const handleInputChange = (field: keyof ExtensionConfig, value: any) => {
+  const handleInputChange = (field: keyof ExtensionConfig, value: unknown) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -81,22 +89,6 @@ const ConfigForm: React.FC<ConfigFormProps> = ({ onSubmit }) => {
     if (formData.pricingModel !== 'none') features.push('Pricing');
     return features.join(', ') || 'Basic features only';
   };
-
-  function getWebsiteFeatures(config: ExtensionConfig): string {
-    const features = [];
-    if (config.includePricing) features.push('Pricing');
-    if (config.includeTestimonials) features.push('Testimonials');
-    if (config.includeAuth) features.push('Auth');
-    if (config.includeCookieBanner) features.push('Cookie Banner');
-    if (config.includeNewsletter) features.push('Newsletter');
-    if (config.includeBlog) features.push('Blog');
-    if (config.includeSearch) features.push('Search');
-    if (config.includePWA) features.push('PWA');
-    if (config.includeStatusPage) features.push('Status Page');
-    if (config.includeAPIDocs) features.push('API Docs');
-    if (config.includeUserDashboard) features.push('Dashboard');
-    return features.join(', ') || 'Basic website';
-  }
 
   return (
     <form className="config-form" onSubmit={handleSubmit}>
@@ -387,6 +379,119 @@ const ConfigForm: React.FC<ConfigFormProps> = ({ onSubmit }) => {
             <option value="session">Session (Temporary)</option>
           </select>
         </div>
+      </div>
+
+      {/* Google Analytics */}
+      <div className="form-section">
+        <h2>📊 Google Analytics</h2>
+        <p>
+          Track user behavior and extension usage to improve your product. You&apos;ll need to
+          create a Google Analytics account and get your measurement ID.
+        </p>
+
+        <div className="form-group">
+          <div className="checkbox-item">
+            <input
+              type="checkbox"
+              id="analytics-enabled"
+              checked={formData.analytics?.enabled || false}
+              onChange={(e) =>
+                handleInputChange('analytics', {
+                  ...formData.analytics,
+                  enabled: e.target.checked,
+                })
+              }
+            />
+            <label htmlFor="analytics-enabled">Enable Google Analytics</label>
+          </div>
+        </div>
+
+        {formData.analytics?.enabled && (
+          <>
+            <div className="form-group">
+              <label htmlFor="googleAnalyticsId">Google Analytics ID *</label>
+              <input
+                type="text"
+                id="googleAnalyticsId"
+                value={formData.analytics?.googleAnalyticsId || ''}
+                onChange={(e) =>
+                  handleInputChange('analytics', {
+                    ...formData.analytics,
+                    googleAnalyticsId: e.target.value,
+                  })
+                }
+                placeholder="G-XXXXXXXXXX"
+                required
+              />
+              <small>
+                Format: G-XXXXXXXXXX. Get this from your Google Analytics account under Admin → Data
+                Streams → Web Stream → Measurement ID.
+              </small>
+            </div>
+
+            <div className="form-group">
+              <label>Tracking Options</label>
+              <div className="checkbox-group">
+                <div className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    id="trackPageViews"
+                    checked={formData.analytics?.trackPageViews !== false}
+                    onChange={(e) =>
+                      handleInputChange('analytics', {
+                        ...formData.analytics,
+                        trackPageViews: e.target.checked,
+                      })
+                    }
+                  />
+                  <label htmlFor="trackPageViews">Track page views on website</label>
+                </div>
+                <div className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    id="trackButtonClicks"
+                    checked={formData.analytics?.trackButtonClicks !== false}
+                    onChange={(e) =>
+                      handleInputChange('analytics', {
+                        ...formData.analytics,
+                        trackButtonClicks: e.target.checked,
+                      })
+                    }
+                  />
+                  <label htmlFor="trackButtonClicks">Track button clicks and interactions</label>
+                </div>
+                <div className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    id="trackUserActions"
+                    checked={formData.analytics?.trackUserActions !== false}
+                    onChange={(e) =>
+                      handleInputChange('analytics', {
+                        ...formData.analytics,
+                        trackUserActions: e.target.checked,
+                      })
+                    }
+                  />
+                  <label htmlFor="trackUserActions">Track user actions and feature usage</label>
+                </div>
+                <div className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    id="trackExtensionUsage"
+                    checked={formData.analytics?.trackExtensionUsage !== false}
+                    onChange={(e) =>
+                      handleInputChange('analytics', {
+                        ...formData.analytics,
+                        trackExtensionUsage: e.target.checked,
+                      })
+                    }
+                  />
+                  <label htmlFor="trackExtensionUsage">Track extension usage and performance</label>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Website */}

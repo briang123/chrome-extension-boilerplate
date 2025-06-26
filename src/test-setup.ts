@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
 // Mock Chrome extension APIs
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global as any).chrome = {
   runtime: {
     sendMessage: vi.fn(),
@@ -26,7 +27,7 @@ import { vi } from 'vitest';
     query: vi.fn(),
     sendMessage: vi.fn(),
   },
-} as any;
+};
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {

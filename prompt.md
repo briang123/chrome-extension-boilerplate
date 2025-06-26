@@ -37,6 +37,7 @@ This generator scaffolds a Chrome Extension project with a customizable stack. I
 - Accessibility
 - Authentication (email, Google, GitHub)
 - AI integrations (OpenAI, Claude, Gemini)
+- Google Analytics integration (page views, button clicks, user actions, extension usage)
 - Database (Firebase, Supabase, MongoDB, PostgreSQL)
 - Pricing model (freemium, subscription, one-time, usage-based)
 - Hosting provider (Vercel, Netlify, Firebase, AWS, GitHub Pages)
@@ -187,6 +188,16 @@ The CLI collects essential information first, then provides clear, user-friendly
 - **Sync** - Syncs data across devices (best for users on multiple devices)
 - **Local** - Only on this device
 
+**Google Analytics Integration:**
+
+- **Enable Analytics** - Track user behavior and extension usage to improve your product
+- **Google Analytics ID** - Your GA4 measurement ID (G-XXXXXXXXXX format)
+- **Tracking Options:**
+  - **Page Views** - Track page views on website
+  - **Button Clicks** - Track button clicks and interactions
+  - **User Actions** - Track user actions and feature usage
+  - **Extension Usage** - Track extension usage and performance
+
 **Accessibility Features** - Helps users with disabilities and improves usability for everyone (highly recommended for inclusivity)
 
 **Standalone Website:**
@@ -203,6 +214,7 @@ The CLI collects essential information first, then provides clear, user-friendly
 - Clear warnings and error messages guide users to valid configurations
 - Firebase is suggested as default database for easy setup
 - Website features default intelligently based on previous selections
+- Google Analytics ID validation ensures proper GA4 measurement ID format (G-XXXXXXXXXX)
 
 #### 3. 🔐 Comprehensive Authentication System
 
@@ -375,51 +387,31 @@ Scaffold based on features:
 - `docs/ai-changelogs.md`
 - `docs/ai-troubleshooting.md`
 - `docs/prd.md`
-- `docs/feature-summary.md`
-- `docs/USAGE.md` — Instructions for repo reuse as GitHub template
-- `README.md` — Overview + CLI usage + feature summary
-- `docs/chrome-store-listing.md` — Complete Chrome Web Store submission guide
-- All documentation should be updated dynamically based on selected features.
+- `docs/design-system.md`
+- `docs/analytics-setup.md` (if analytics is enabled)
 
-#### 10. ♻️ Dev Tooling & Testing
+**Documentation Requirements**
 
-- Vite + HMR
-- Testing with Vitest or Jest
-- Chrome API mocks
-- Unit + integration test samples
-- Authentication flow testing (when auth is enabled)
-- Security testing (rate limiting, validation, token management)
-- Accessibility testing
-- Commands:
-  - `npm run init`
-  - `npm run dev`
-  - `npm run build`
-  - `npm run zip`
-- Linting with ESLint and Prettier
+Include these files:
 
-#### 11. ♻️ Cleanup Guidance
+- `docs/ai-changelogs.md`  
+  Log of AI-generated feature changes, grouped by date and issue/feature.
 
-- Unused scaffolded code should have:
-  `// Optional setup for {provider}. Delete if not needed.`
+- `docs/ai-troubleshooting.md`  
+  Troubleshooting history (grouped by issue type + date). Additive only, newest at top.
 
----
+- `docs/prd.md`  
+  Product requirements doc. AI will mark items ✅ when completed, and update notes.
 
-### 🏁 Summary
+- `docs/design-system.md`  
+  A modern, themeable design system tailored for **Chrome Extensions**, including:
 
-> 📓 All features, setup, and integrations must be conditionally scaffolded based on the user's interactive CLI answers. The boilerplate must be zero-assumption by default.
+  - Color tokens with light/dark mode (toggle capability)
+  - Suggested emotion-based palettes
 
-> 🔒 **Security First:** When authentication is enabled, implement enterprise-level security measures including proper validation, rate limiting, secure token management, and comprehensive error handling.
-
-> 🎯 **User Experience:** Provide clear, helpful explanations for each feature choice to guide users toward the best configuration for their needs.
-
-> 🌐 **Content Generation:** Use the extension description to generate appropriate content for the extension, website, and Chrome Web Store listing.
-
-> 🏪 **Store Ready:** Provide comprehensive guidance for Chrome Web Store submission with all required information and best practices.
-
----
-
-### 📦 Sample Output
-
-Consider including a sample directory structure and a sample CLI session in the documentation to illustrate the output and user experience.
-
----
+- `docs/analytics-setup.md` (if analytics is enabled)
+  Google Analytics setup and configuration guide, including:
+  - How to obtain and configure GA4 measurement ID
+  - Event tracking implementation
+  - Privacy and consent management
+  - Chrome Web Store compliance guidelines

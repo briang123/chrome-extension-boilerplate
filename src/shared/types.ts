@@ -15,6 +15,15 @@ export type StorageType = 'sync' | 'local';
 
 export type WebsiteFramework = 'vite' | 'nextjs';
 
+export interface AnalyticsConfig {
+  enabled: boolean;
+  googleAnalyticsId?: string;
+  trackPageViews: boolean;
+  trackButtonClicks: boolean;
+  trackUserActions: boolean;
+  trackExtensionUsage: boolean;
+}
+
 export interface ExtensionConfig {
   // Basic Information
   extensionName: string;
@@ -40,6 +49,9 @@ export interface ExtensionConfig {
   pricingModel: PricingModel;
   hostingProviders: HostingProvider[];
   storageType: StorageType;
+
+  // Analytics
+  analytics: AnalyticsConfig;
 
   // Website
   includeWebsite: boolean;

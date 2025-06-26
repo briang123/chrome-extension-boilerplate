@@ -12,7 +12,7 @@
  * Use this after AI generation to ensure your project is error-free.
  */
 
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 
 function runCheck(command: string, description: string): boolean {
   try {
@@ -20,7 +20,7 @@ function runCheck(command: string, description: string): boolean {
     execSync(command, { stdio: 'inherit' });
     console.log(`✅ ${description} passed.`);
     return true;
-  } catch (err) {
+  } catch {
     console.error(`❌ ${description} failed.`);
     return false;
   }
