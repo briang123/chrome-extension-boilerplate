@@ -34,6 +34,82 @@ npm run web:dev
 # Then open http://localhost:5173
 ```
 
+## Scripts
+
+Below are the available npm scripts and their purposes:
+
+| Script       | Command                                      | Description                                                                |
+| ------------ | -------------------------------------------- | -------------------------------------------------------------------------- |
+| `init`       | `ts-node --esm scripts/init.ts`              | Launches the interactive CLI to scaffold or update your extension project. |
+| `web`        | `vite`                                       | Starts the Vite dev server for the web app (default mode).                 |
+| `web:dev`    | `vite --mode development`                    | Starts the Vite dev server in development mode for the web app.            |
+| `web:build`  | `vite build`                                 | Builds the production-ready web app.                                       |
+| `dev`        | `vite`                                       | Alias for `web` (starts the dev server).                                   |
+| `build`      | `vite build`                                 | Alias for `web:build` (builds the web app).                                |
+| `zip`        | `zip -r dist.zip dist/`                      | Zips the `dist/` directory for Chrome Web Store submission.                |
+| `validate`   | `node scripts/validate-generated-project.ts` | Runs type-checking and linting to validate the generated project.          |
+| `test`       | `vitest`                                     | Runs all tests using Vitest.                                               |
+| `test:ui`    | `vitest --ui`                                | Launches the Vitest UI for interactive test running.                       |
+| `test:run`   | `vitest run`                                 | Runs tests in non-interactive (CI) mode.                                   |
+| `lint`       | `eslint . --ext .ts,.tsx --fix`              | Lints and auto-fixes code using ESLint.                                    |
+| `type-check` | `tsc --noEmit`                               | Runs TypeScript type-checking only.                                        |
+| `format`     | `prettier --write .`                         | Formats all code using Prettier.                                           |
+
+## Recommended Workflow
+
+Follow this workflow for a smooth development and release process:
+
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
+2. **Initialize or update your project**
+   - Run the interactive CLI to scaffold or add features:
+     ```bash
+     npm run init
+     ```
+3. **Develop your extension and/or web app**
+   - For the web app UI:
+     ```bash
+     npm run web:dev
+     # or
+     npm run dev
+     # Then open http://localhost:5173
+     ```
+4. **Test and validate your code**
+   - Run tests:
+     ```bash
+     npm test
+     # or for UI:
+     npm run test:ui
+     ```
+   - Lint and type-check:
+     ```bash
+     npm run lint
+     npm run type-check
+     ```
+   - Validate the generated project:
+     ```bash
+     npm run validate
+     ```
+5. **Format your code**
+   ```bash
+   npm run format
+   ```
+6. **Build for production**
+   ```bash
+   npm run build
+   # or
+   npm run web:build
+   ```
+7. **Package for Chrome Web Store**
+   ```bash
+   npm run zip
+   # This creates dist.zip for upload
+   ```
+
+> **Tip:** You can re-run `npm run init` at any time to add new features or update your configuration. The CLI is idempotent and will not overwrite your custom code.
+
 ## Documentation
 
 - [Project Structure](docs/example-project-structure.md)
