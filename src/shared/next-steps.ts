@@ -52,43 +52,43 @@ export function generateNextSteps(config: ExtensionConfig): NextStepsInfo {
   // Add specific steps based on selected features
   if (config.authMethods && config.authMethods.some((method) => method !== 'none')) {
     immediateSteps.push(
-      '🔐 **Set up authentication:** Configure your chosen auth providers (Google, GitHub, etc.)',
+      '🔐 **Set up authentication:** Configure your chosen auth providers (Google, GitHub, etc.)'
     );
     deploymentSteps.push(
-      '🔑 **Configure auth secrets:** Add your OAuth credentials to environment variables',
+      '🔑 **Configure auth secrets:** Add your OAuth credentials to environment variables'
     );
   }
 
   if (config.database && config.database !== 'none') {
     immediateSteps.push(
-      '🗄️ **Set up database:** Create your database instance and get connection details',
+      '🗄️ **Set up database:** If your AI agent supports it (e.g., Replit), let it create the database and schema automatically. Otherwise, have the AI agent generate the necessary scripts and SQL statements to create the schema/tables, and run them manually.'
     );
     deploymentSteps.push(
-      '🔧 **Configure database:** Add database connection strings to environment variables',
+      '🔧 **Configure database:** Add database connection strings to environment variables'
     );
   }
 
   if (config.includeWebsite) {
     immediateSteps.push(
-      '🌐 **Customize website:** Edit the generated website files to match your brand',
+      '🌐 **Customize website:** Edit the generated website files to match your brand'
     );
     deploymentSteps.push(
-      '🚀 **Deploy website:** Upload website files to your chosen hosting provider',
+      '🚀 **Deploy website:** Upload website files to your chosen hosting provider'
     );
   }
 
   if (config.includeCookieBanner) {
     immediateSteps.push(
-      '🍪 **Configure cookie banner:** Update cookie policy and consent settings',
+      '🍪 **Configure cookie banner:** Update cookie policy and consent settings'
     );
     deploymentSteps.push(
-      '📋 **Update privacy policy:** Ensure cookie policy is included in privacy policy',
+      '📋 **Update privacy policy:** Ensure cookie policy is included in privacy policy'
     );
   }
 
   if (config.pricingModel && config.pricingModel !== 'none') {
     immediateSteps.push(
-      '💳 **Set up payments:** Configure your payment processor (Stripe, PayPal, etc.)',
+      '💳 **Set up payments:** Configure your payment processor (Stripe, PayPal, etc.)'
     );
     deploymentSteps.push('💰 **Test payments:** Verify your payment flow works correctly');
   }

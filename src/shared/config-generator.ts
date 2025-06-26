@@ -15,10 +15,10 @@ export function generateAIPrompt(config: ExtensionConfig): string {
   // UI Type
   if (config.uiType === 'sidewindow') {
     features.push(
-      '- Side Window (detached pop-out, ChatGPT-style): Opens in a dedicated side window, not injected into the page.',
+      '- Side Window (detached pop-out, ChatGPT-style): Opens in a dedicated side window, not injected into the page.'
     );
     features.push(
-      '  - Use a background script to call chrome.windows.create({ url: "window.html", type: "popup", width: 400, height: 800 })',
+      '  - Use a background script to call chrome.windows.create({ url: "window.html", type: "popup", width: 400, height: 800 })'
     );
     features.push('  - The main extension action should only be a launcher, not the full UI.');
     features.push('  - Do NOT inject a UI overlay into the current page.');
@@ -54,8 +54,12 @@ export function generateAIPrompt(config: ExtensionConfig): string {
   }
 
   // Backend
-  if (config.database && config.database !== 'none')
+  if (config.database && config.database !== 'none') {
     features.push(`- Database: ${config.database}`);
+    features.push(
+      '  - If your AI agent supports it (e.g., Replit), create the database and schema automatically. Otherwise, generate the scripts and SQL statements to create the schema/tables, and instruct the user to run them manually.'
+    );
+  }
   if (config.pricingModel && config.pricingModel !== 'none')
     features.push(`- Pricing Model: ${config.pricingModel}`);
   if (
@@ -412,7 +416,7 @@ After generating all project files, create:
   - Directory structure
   - Any smart defaults or important notes
   - Support/contact info
-- A \`docs/README.md\` in the docs folder, summarizing all documentation and linking to key docs.
+- A \`docs/README.md\` in the docs folder, summarizing all documentation folder contents, explain how to use the documentation, link to key docs, provide ToC for docs/ directory.
 - Ensure all files are valid, linted, and error-free.
 - The content of these files should be based on the user's configuration and selected features.
 `;
