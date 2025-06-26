@@ -78,9 +78,7 @@ describe('validateConfig', () => {
 
     const result = validateConfig(config);
     expect(result.isValid).toBe(false);
-    expect(result.errors).toContain(
-      'Authentication requires a database. Please select a database option.',
-    );
+    expect(result.errors).toContain('Database is required when authentication is enabled');
   });
 
   it('should require database when pricing is enabled', () => {
@@ -115,8 +113,6 @@ describe('validateConfig', () => {
 
     const result = validateConfig(config);
     expect(result.isValid).toBe(false);
-    expect(result.errors).toContain(
-      'Pricing model requires a database. Please select a database option.',
-    );
+    expect(result.errors).toContain('Database is required when pricing model is enabled');
   });
 });
