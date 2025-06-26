@@ -22,7 +22,6 @@
   "dependencies": {
     "@types/yargs": "^17.0.33",
     "enquirer": "^2.4.1",
-    "fastify": "^4.25.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "yargs": "^17.7.2"
